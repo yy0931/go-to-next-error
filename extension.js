@@ -39,7 +39,6 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
             // Fix: When there is only one error location in the file, multiple command calls will select a non-error marker.
             if (lastPosition !== null &&
                 lastPosition.position.isEqual(next.range.start) &&
-                lastPosition.uri.toString() === editor.document.uri.toString() &&
                 editor.selection.start.isEqual(next.range.start)
             ) {
                 return true
