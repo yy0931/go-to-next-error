@@ -1,0 +1,64 @@
+{
+	"name": "go-to-next-error",
+	"displayName": "Go to Next Error",
+	"description": "Resolves https://github.com/microsoft/vscode/issues/105795",
+	"version": "1.0.0",
+	"publisher": "yy0931",
+	"icon": "icon.gif",
+	"engines": {
+		"vscode": "^1.57.0"
+	},
+	"categories": [
+		"Other"
+	],
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/yy0931/go-to-next-error"
+	},
+	"bugs": {
+		"url": "https://github.com/yy0931/go-to-next-error/issues"
+	},
+	"activationEvents": [
+		"onCommand:go-to-next-error.nextInFiles.error",
+		"onCommand:go-to-next-error.next.error",
+		"onCommand:go-to-next-error.nextInFiles.warning",
+		"onCommand:go-to-next-error.next.warning"
+	],
+	"keywords": [
+		"error",
+		"warning",
+		"problem",
+		"marker"
+	],
+	"main": "./extension.js",
+	"contributes": {
+		"commands": [
+			{
+				"command": "go-to-next-error.nextInFiles.error",
+				"title": "Go to Next Problem in Files (Error)"
+			},
+			{
+				"command": "go-to-next-error.next.error",
+				"title": "Go to Next Problem (Error)"
+			},
+			{
+				"command": "go-to-next-error.nextInFiles.warning",
+				"title": "Go to Next Problem in Files (Error, Warning)"
+			},
+			{
+				"command": "go-to-next-error.next.warning",
+				"title": "Go to Next Problem (Error, Warning)"
+			}
+		]
+	},
+	"capabilities": {
+		"virtualWorkspaces": true,
+		"untrustedWorkspaces": {
+			"supported": true
+		}
+	},
+	"devDependencies": {
+		"@types/node": "^17.0.33",
+		"@types/vscode": "^1.57.0"
+	}
+}
