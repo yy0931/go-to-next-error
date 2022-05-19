@@ -49,6 +49,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
 
         lastPosition = { position: next.range.start, uri: editor.document.uri }
         editor.selection = new vscode.Selection(next.range.start, next.range.start)
+        await vscode.commands.executeCommand("closeMarkersNavigation")
         await vscode.commands.executeCommand("editor.action.marker.next")
         return true
     }
@@ -80,6 +81,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         lastPosition = { position: next.range.start, uri }
         const editor = await vscode.window.showTextDocument(await vscode.workspace.openTextDocument(uri))
         editor.selection = new vscode.Selection(next.range.start, next.range.start)
+        await vscode.commands.executeCommand("closeMarkersNavigation")
         await vscode.commands.executeCommand("editor.action.marker.nextInFiles")
     }
 
