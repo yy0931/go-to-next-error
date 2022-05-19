@@ -2,7 +2,7 @@
 	"name": "go-to-next-error",
 	"displayName": "Go to Next Error",
 	"description": "Resolves https://github.com/microsoft/vscode/issues/105795",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"publisher": "yy0931",
 	"icon": "icon.gif",
 	"engines": {
@@ -31,6 +31,7 @@
 		"marker"
 	],
 	"main": "./extension.js",
+	"browser": "./extension.js",
 	"contributes": {
 		"commands": [
 			{
