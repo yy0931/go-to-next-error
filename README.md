@@ -21,7 +21,8 @@ To change the behavior of the F8 key from the default `Go to Next Problem in Fil
 },
 {
     "key": "f8",
-    "command": "go-to-next-error.nextInFiles.warning"
+    "command": "go-to-next-error.nextInFiles.warning",
+    "when": "editorFocus"
 }
 ```
 
