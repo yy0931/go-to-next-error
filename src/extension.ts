@@ -10,18 +10,18 @@ export const activate = (context: vscode.ExtensionContext) => {
         if (currentMarker.range.start.isBeforeOrEqual(editor.selection.start) && // Select only errors before the cursor.
             (soFarClosest === null || currentMarker.range.start.isAfter(soFarClosest.range.start)) // Select the error closest to the cursor.
         ) {
-            return currentMarker;
+            return currentMarker
         }
-        return soFarClosest;
+        return soFarClosest
     }
 
     const getCloserNext = (editor: vscode.TextEditor, currentMarker: vscode.Diagnostic, soFarClosest: vscode.Diagnostic | null) => {
         if (currentMarker.range.start.isAfterOrEqual(editor.selection.start) && // Select only errors before the cursor.
             (soFarClosest === null || currentMarker.range.start.isBefore(soFarClosest.range.start)) // Select the error closest to the cursor.
         ) {
-            return currentMarker;
+            return currentMarker
         }
-        return soFarClosest;
+        return soFarClosest
     }
 
     /**
@@ -42,7 +42,7 @@ export const activate = (context: vscode.ExtensionContext) => {
 
         for (const d of diagnostics) {
             if (lastPosition && d.range.start.isEqual(lastPosition.position)) {
-                continue;
+                continue
             }
 
             next = direction === "next"
