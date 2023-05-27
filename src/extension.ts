@@ -1,17 +1,16 @@
-const vscode = require("vscode")
+import * as vscode from 'vscode'
 
-exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
-    /** @type {{ uri: vscode.Uri, position:vscode.Position }| null} */
-    let lastPosition = null
+export const activate = (context: vscode.ExtensionContext) => {
+    let lastPosition: { uri: vscode.Uri, position:vscode.Position } | null = null
 
-    const getFirstMarker = (/** @type {vscode.Diagnostic[]} */diagnostics) =>
+    const getFirstMarker = (diagnostics: vscode.Diagnostic[]) =>
         diagnostics.sort((a, b) => a.range.start.isBefore(b.range.start) ? -1 : (a.range.start.isEqual(b.range.start) ? 0 : 1))[0]
 
     /**
      * Selects the next error in the active file.
      * Returns false if loop = false and there are no errors after the cursor.
      */
-    const gotoNextMarkerInFile = async (/** @type {vscode.DiagnosticSeverity[]} */filter, /** @type {boolean} */loop = true) => {
+    const gotoNextMarkerInFile = async (filter: vscode.DiagnosticSeverity[], loop = true) => {
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) { return false }
         const diagnostics = vscode.languages.getDiagnostics(editor.document.uri)
@@ -20,8 +19,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         if (lastPosition?.uri.toString() !== editor.document.uri.toString()) {
             lastPosition = null
         }
-        /** @type {vscode.Diagnostic | null} */
-        let next = null
+        let next: vscode.Diagnostic | null = null
         if (diagnostics.length === 0) { return false }
 
         for (const d of diagnostics) {
@@ -54,7 +52,7 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
         return true
     }
 
-    const gotoNextMarkerInFiles = async (/** @type {vscode.DiagnosticSeverity[]} */filter) => {
+    const gotoNextMarkerInFiles = async (filter: vscode.DiagnosticSeverity[]) => {
         // If there is an error after the cursor in the file, select it.
         if (await gotoNextMarkerInFile(filter, false)) { return }
 
@@ -93,4 +91,4 @@ exports.activate = (/** @type {vscode.ExtensionContext} */context) => {
     )
 }
 
-exports.deactivate = () => { }
+export const deactivate = () => { }

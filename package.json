@@ -34,8 +34,8 @@
 		"problem",
 		"marker"
 	],
-	"main": "./extension.js",
-	"browser": "./extension.js",
+	"main": "./out/extension.js",
+	"browser": "./out/extension.js",
 	"contributes": {
 		"commands": [
 			{
@@ -62,8 +62,14 @@
 			"supported": true
 		}
 	},
+	"scripts": {
+		"vscode:prepublish": "npm run compile",
+		"compile": "tsc -p ./",
+		"watch": "tsc -watch -p ./"
+	},
 	"devDependencies": {
 		"@types/node": "^17.0.33",
-		"@types/vscode": "^1.57.0"
+		"@types/vscode": "^1.57.0",
+		"typescript": "^5.0.4"
 	}
 }
