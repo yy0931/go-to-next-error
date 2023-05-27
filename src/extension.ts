@@ -3,14 +3,33 @@ import * as vscode from 'vscode'
 export const activate = (context: vscode.ExtensionContext) => {
     let lastPosition: { uri: vscode.Uri, position:vscode.Position } | null = null
 
-    const getFirstMarker = (diagnostics: vscode.Diagnostic[]) =>
-        diagnostics.sort((a, b) => a.range.start.isBefore(b.range.start) ? -1 : (a.range.start.isEqual(b.range.start) ? 0 : 1))[0]
+    const getMarkersSorted = (diagnostics: vscode.Diagnostic[]) =>
+        diagnostics.sort((a, b) => a.range.start.isBefore(b.range.start) ? -1 : (a.range.start.isEqual(b.range.start) ? 0 : 1))
+    
+
+    const getCloserPrev = (editor: vscode.TextEditor, currentMarker: vscode.Diagnostic, soFarClosest: vscode.Diagnostic | null) => {
+        if (currentMarker.range.start.isBeforeOrEqual(editor.selection.start) && // Select only errors before the cursor.
+            (soFarClosest === null || currentMarker.range.start.isAfter(soFarClosest.range.start)) // Select the error closest to the cursor.
+        ) { 
+            return currentMarker;
+        }
+        return soFarClosest;
+    }
+
+    const getCloserNext = (editor: vscode.TextEditor, currentMarker: vscode.Diagnostic, soFarClosest: vscode.Diagnostic | null) => {
+        if (currentMarker.range.start.isAfterOrEqual(editor.selection.start) && // Select only errors before the cursor.
+            (soFarClosest === null || currentMarker.range.start.isBefore(soFarClosest.range.start)) // Select the error closest to the cursor.
+        ) { 
+            return currentMarker;
+        }
+        return soFarClosest;
+    }
 
     /**
      * Selects the next error in the active file.
      * Returns false if loop = false and there are no errors after the cursor.
      */
-    const gotoNextMarkerInFile = async (filter: vscode.DiagnosticSeverity[], loop = true) => {
+    const gotoMarkerInFile = async (filter: vscode.DiagnosticSeverity[], direction: 'next' | 'prev', loop = true) => {
         const editor = vscode.window.activeTextEditor
         if (editor === undefined) { return false }
         const diagnostics = vscode.languages.getDiagnostics(editor.document.uri)
@@ -23,16 +42,18 @@ export const activate = (context: vscode.ExtensionContext) => {
         if (diagnostics.length === 0) { return false }
 
         for (const d of diagnostics) {
-            if (editor.selection.start.isBeforeOrEqual(d.range.start) &&  // Select only errors after the cursor.
-                (lastPosition === null || !d.range.start.isEqual(lastPosition.position)) && // Don't select the same error consecutively.
-                (next === null || d.range.start.isBefore(next.range.start))  // Select the error closest to the cursor.
-            ) {
-                next = d
+            if (lastPosition && d.range.start.isEqual(lastPosition.position)) {
+                continue;
             }
+
+            next = direction === 'next'
+                ? getCloserNext(editor, d, next)
+                : getCloserPrev(editor, d, next)
         }
 
         if (next === null && loop) {
-            next = getFirstMarker(diagnostics)
+            const sortedMarkers = getMarkersSorted(diagnostics)
+            next = direction === 'next' ? sortedMarkers[0] : sortedMarkers[sortedMarkers.length - 1]
 
             // Fix: When there is only one error location in the file, multiple command calls will select a non-error marker.
             if (lastPosition !== null &&
@@ -54,7 +75,7 @@ export const activate = (context: vscode.ExtensionContext) => {
 
     const gotoNextMarkerInFiles = async (filter: vscode.DiagnosticSeverity[]) => {
         // If there is an error after the cursor in the file, select it.
-        if (await gotoNextMarkerInFile(filter, false)) { return }
+        if (await gotoMarkerInFile(filter, 'next', false)) { return }
 
         // Get the first error in the next document.
         const filesSorted = vscode.languages.getDiagnostics()
@@ -66,14 +87,14 @@ export const activate = (context: vscode.ExtensionContext) => {
         if (filesSorted.length === 0) { return }
         if (filesSorted.length === 1 && filesSorted[0][0].toString() === vscode.window.activeTextEditor?.document.uri.toString()) {
             // Fix: When there is only one error location in all files, multiple command calls will select a non-error marker.
-            await gotoNextMarkerInFile(filter, true)
+            await gotoMarkerInFile(filter, 'next', true)
             return
         }
 
         const currentDocumentUri = vscode.window.activeTextEditor?.document.uri.toString()
         const activeFileIndex = filesSorted.findIndex(([uri]) => uri.toString() === currentDocumentUri)
         const [uri, diagnostics] = filesSorted[activeFileIndex === -1 ? 0 : ((activeFileIndex + 1) % filesSorted.length)]
-        const next = getFirstMarker(diagnostics)
+        const next = getMarkersSorted(diagnostics)[0]
 
         // Open the document and select the error.
         lastPosition = { position: next.range.start, uri }
@@ -84,9 +105,11 @@ export const activate = (context: vscode.ExtensionContext) => {
     }
 
     context.subscriptions.push(
-        vscode.commands.registerCommand("go-to-next-error.next.error", () => gotoNextMarkerInFile([vscode.DiagnosticSeverity.Error])),
+        vscode.commands.registerCommand("go-to-next-error.next.error", () => gotoMarkerInFile([vscode.DiagnosticSeverity.Error], 'next')),
+        vscode.commands.registerCommand("go-to-next-error.prev.error", () => gotoMarkerInFile([vscode.DiagnosticSeverity.Error], 'prev')),
         vscode.commands.registerCommand("go-to-next-error.nextInFiles.error", () => gotoNextMarkerInFiles([vscode.DiagnosticSeverity.Error])),
-        vscode.commands.registerCommand("go-to-next-error.next.warning", () => gotoNextMarkerInFile([vscode.DiagnosticSeverity.Error, vscode.DiagnosticSeverity.Warning])),
+        vscode.commands.registerCommand("go-to-next-error.next.warning", () => gotoMarkerInFile([vscode.DiagnosticSeverity.Error, vscode.DiagnosticSeverity.Warning], 'next')),
+        vscode.commands.registerCommand("go-to-next-error.prev.warning", () => gotoMarkerInFile([vscode.DiagnosticSeverity.Error, vscode.DiagnosticSeverity.Warning], 'prev')),
         vscode.commands.registerCommand("go-to-next-error.nextInFiles.warning", () => gotoNextMarkerInFiles([vscode.DiagnosticSeverity.Error, vscode.DiagnosticSeverity.Warning])),
     )
 }
