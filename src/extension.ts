@@ -68,7 +68,16 @@ export const activate = (context: vscode.ExtensionContext) => {
         lastPosition = { position: next.range.start, uri: editor.document.uri }
         editor.selection = new vscode.Selection(next.range.start, next.range.start)
         await vscode.commands.executeCommand("closeMarkersNavigation")  // Issue #3
-        await vscode.commands.executeCommand("editor.action.marker.next")
+        
+        const problemInViewport = editor.visibleRanges.every(r => r.contains(editor.selection))
+        const smoothScroll = vscode.workspace.getConfiguration().get('editor.smoothScrolling') as boolean;
+        
+        if (problemInViewport || !smoothScroll) {
+            await vscode.commands.executeCommand("editor.action.showHover")
+        } else {
+            editor.revealRange(next.range);
+            setTimeout(() => vscode.commands.executeCommand("editor.action.showHover"), 150)
+        }
         return true
     }
 
