@@ -2,7 +2,7 @@
 	"name": "go-to-next-error",
 	"displayName": "Go to Next Error",
 	"description": "Resolves https://github.com/microsoft/vscode/issues/105795",
-	"version": "1.0.5",
+	"version": "1.0.6",
 	"publisher": "yy0931",
 	"icon": "icon.gif",
 	"engines": {
@@ -64,7 +64,18 @@
 				"command": "go-to-next-error.prev.warning",
 				"title": "Go to Previous Problem (Error, Warning)"
 			}
-		]
+		],
+        "configuration": {
+            "title": "Go to Next Error",
+            "properties": {
+                "go-to-next-error.multiSeverityHandlingMethod": {
+                    "type": "string",
+                    "enum": ["marker", "hover"],
+                    "default": "hover",
+                    "markdownDescription": "- `marker` may not function as expected when errors and warnings are mixed (see https://github.com/yy0931/go-to-next-error/pull/9), but it provides a more native feel.\n- `hover` doesn't have such problems, but may feel less native and could be laggy if `editor.smoothScrolling` is enabled."
+                }
+            }
+        }
 	},
 	"capabilities": {
 		"virtualWorkspaces": true,
