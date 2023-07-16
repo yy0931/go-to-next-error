@@ -68,15 +68,26 @@ export const activate = (context: vscode.ExtensionContext) => {
         lastPosition = { position: next.range.start, uri: editor.document.uri }
         editor.selection = new vscode.Selection(next.range.start, next.range.start)
         await vscode.commands.executeCommand("closeMarkersNavigation")  // Issue #3
-        
-        const problemInViewport = editor.visibleRanges.every(r => r.contains(editor.selection))
-        const smoothScroll = vscode.workspace.getConfiguration().get('editor.smoothScrolling') as boolean;
-        
-        if (problemInViewport || !smoothScroll) {
-            await vscode.commands.executeCommand("editor.action.showHover")
+
+        // Due to the limitations of the VSCode API, we default to using `showHover` instead of `marker.next` when the `filter` is `[Error, Warning]`. #8
+        if ((filter.length === 1 && filter[0] === vscode.DiagnosticSeverity.Error) ||
+            vscode.workspace.getConfiguration("go-to-next-error").get<"marker" | "hover">("multiSeverityHandlingMethod") === "marker") {
+            await vscode.commands.executeCommand("editor.action.marker.next")
         } else {
-            editor.revealRange(next.range);
-            setTimeout(() => vscode.commands.executeCommand("editor.action.showHover"), 150)
+            // If the problem is not within the viewport
+            if (!editor.visibleRanges.every((r) => r.contains(editor.selection))) {
+                // Scroll to the error location in the editor
+                editor.revealRange(next.range)
+
+                // If smooth scrolling is enabled
+                if (vscode.workspace.getConfiguration().get<boolean>("editor.smoothScrolling")) {
+                    // Wait for the smooth scroll to complete before displaying the hover because scrolling hides the hover.
+                    // 150ms seems to work on all platforms.
+                    await new Promise((resolve) => setTimeout(resolve, 150))
+                }
+            }
+
+            await vscode.commands.executeCommand("editor.action.showHover")
         }
         return true
     }
