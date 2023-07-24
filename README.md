@@ -2,12 +2,14 @@
 
 This extension adds the following commands to VSCode.
 
-- `Go to Previous Problem (Error)`
 - `Go to Next Problem (Error)`
+- `Go to Previous Problem (Error)`
 - `Go to Next Problem in Files (Error)`
-- `Go to Previous Problem (Error, Warning)`
+- `Go to Previous Problem in Files (Error)`
 - `Go to Next Problem (Error, Warning)`
+- `Go to Previous Problem (Error, Warning)`
 - `Go to Next Problem in Files (Error, Warning)`
+- `Go to Previous Problem in Files (Error, Warning)`
 
 These commands are like the VSCode's built-in `Go to Previous/Next Problem (Error, Warning, Info)` and `Go to Next Problem in Files (Error, Warning, Info)`, but they select only markers of the specified severity.
 

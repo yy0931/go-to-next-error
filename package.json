@@ -24,9 +24,11 @@
 	},
 	"activationEvents": [
 		"onCommand:go-to-next-error.nextInFiles.error",
+		"onCommand:go-to-next-error.prevInFiles.error",
 		"onCommand:go-to-next-error.next.error",
 		"onCommand:go-to-next-error.prev.error",
 		"onCommand:go-to-next-error.nextInFiles.warning",
+		"onCommand:go-to-next-error.prevInFiles.warning",
 		"onCommand:go-to-next-error.next.warning",
 		"onCommand:go-to-next-error.prev.warning"
 	],
@@ -45,6 +47,10 @@
 				"title": "Go to Next Problem in Files (Error)"
 			},
 			{
+				"command": "go-to-next-error.prevInFiles.error",
+				"title": "Go to Previous Problem in Files (Error)"
+			},
+			{
 				"command": "go-to-next-error.next.error",
 				"title": "Go to Next Problem (Error)"
 			},
@@ -55,6 +61,10 @@
 			{
 				"command": "go-to-next-error.nextInFiles.warning",
 				"title": "Go to Next Problem in Files (Error, Warning)"
+			},
+			{
+				"command": "go-to-next-error.prevInFiles.warning",
+				"title": "Go to Previous Problem in Files (Error, Warning)"
 			},
 			{
 				"command": "go-to-next-error.next.warning",
