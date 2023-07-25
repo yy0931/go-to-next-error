@@ -43,14 +43,6 @@
 	"contributes": {
 		"commands": [
 			{
-				"command": "go-to-next-error.nextInFiles.error",
-				"title": "Go to Next Problem in Files (Error)"
-			},
-			{
-				"command": "go-to-next-error.prevInFiles.error",
-				"title": "Go to Previous Problem in Files (Error)"
-			},
-			{
 				"command": "go-to-next-error.next.error",
 				"title": "Go to Next Problem (Error)"
 			},
@@ -59,12 +51,12 @@
 				"title": "Go to Previous Problem (Error)"
 			},
 			{
-				"command": "go-to-next-error.nextInFiles.warning",
-				"title": "Go to Next Problem in Files (Error, Warning)"
+				"command": "go-to-next-error.nextInFiles.error",
+				"title": "Go to Next Problem in Files (Error)"
 			},
 			{
-				"command": "go-to-next-error.prevInFiles.warning",
-				"title": "Go to Previous Problem in Files (Error, Warning)"
+				"command": "go-to-next-error.prevInFiles.error",
+				"title": "Go to Previous Problem in Files (Error)"
 			},
 			{
 				"command": "go-to-next-error.next.warning",
@@ -73,6 +65,14 @@
 			{
 				"command": "go-to-next-error.prev.warning",
 				"title": "Go to Previous Problem (Error, Warning)"
+			},
+			{
+				"command": "go-to-next-error.nextInFiles.warning",
+				"title": "Go to Next Problem in Files (Error, Warning)"
+			},
+			{
+				"command": "go-to-next-error.prevInFiles.warning",
+				"title": "Go to Previous Problem in Files (Error, Warning)"
 			}
 		],
         "configuration": {
